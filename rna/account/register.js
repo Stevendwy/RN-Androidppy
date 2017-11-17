@@ -1,0 +1,174 @@
+/**
+ * PPY React Native App
+ * Created By Zwei in 2017/02/09
+ */
+
+import React, {
+  Component,
+} from 'react'
+
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  Button,
+  Alert,
+  TouchableOpacity,
+  ToastAndroid,
+  Switch,
+} from 'react-native'
+
+import Root from '../root'
+import NavigatorBar from '../navigatorbar'
+import Login from './login'
+
+export default class Register extends Root {
+	constructor(props) {
+		super(props)
+		this.username = ""
+		this.password = ""
+		this.state = {
+			switchStatus: false,
+			unshowPassword: true
+		}
+	}
+	
+	onButtonPress() {
+		if(this.username.length > 0 && this.password.length > 0) Alert.alert(this.username + " and " + this.password)
+		else {
+			if(this.username.length < 1) ToastAndroid.show("请输入手机号或会员卡号", ToastAndroid.SHORT)
+			else ToastAndroid.show("请输入密码", ToastAndroid.SHORT)
+		}
+	}
+	
+	resetAccount(content, type) {
+		if(type == 0) this.username = content
+		else this.password = content
+	}
+	
+	switchPassword() {
+		let _switchStatus = !this.state.switchStatus
+		this.setState({
+			switchStatus: _switchStatus,
+			unshowPassword: !_switchStatus
+		})
+	}
+	
+	render() {
+		let _switchPassword = this.switchPassword.bind(this)
+		let _switchStatus = this.state.switchStatus
+		let _unshowPassword = this.state.unshowPassword
+		let _navigator = this.props.navigator
+		
+		return (
+			<View style={{flex: 1, backgroundColor: "#EFEFEF"}}>
+				<NavigatorBar title="注册" leftClicked={() => _navigator.pop()}/>
+				<View style={styles.loginContainer}>
+					<View style={styles.viewContentBox}></View>
+					<View style={styles.contentContainer}>
+						<View style={styles.inputContainer}>
+							<TextInput style={styles.input}
+								underlineColorAndroid="transparent"
+								placeholder="手机号"
+								placeholderTextColor="#999"
+								autoFocus={true}
+								keyboardType="numeric"
+		          				onChangeText={text => this.resetAccount(text, 0)}/>
+	          			</View>
+	          			<View style={styles.inputContainer}>
+							<TextInput style={styles.input}
+								underlineColorAndroid="transparent"
+								placeholder="密码"
+								placeholderTextColor="#999"
+								type="password"
+								secureTextEntry={_unshowPassword}
+		          				onChangeText={text => this.resetAccount(text, 1)} />
+		          			<Switch style={styles.switchPassword}
+		          				onValueChange={_switchPassword}
+		          				value={_switchStatus}></Switch>
+	          			</View>
+						<View style={styles.utilsContainer}>
+							{
+								["已有账号 立即登录"].map((item, index) => {
+									return (
+										<TouchableOpacity  key={index}
+											onPress={() => {
+												if(index == 0) _navigator.push({component: Login})
+												else _navigator.push({component: Login})
+											}}
+										>
+											<Text style={{color: "#666"}} key={index}>{item}</Text>
+										</TouchableOpacity>
+									)
+								})
+							}
+						</View>
+						<TouchableOpacity>
+							<Button style={styles.button}
+								onPress={this.onButtonPress.bind(this)}
+								title="登录"
+								color="#C8372B"/>
+						</TouchableOpacity>
+						<View style={styles.userRemindContainer}>
+							<Text style={styles.userRemind}>点击注册按钮即代表您同意我们的
+								<Text style={[styles.userRemind, styles.userDelegate]}>用户注册协议</Text>
+							</Text>
+						</View>
+					</View>
+					<View style={styles.viewContentBox}></View>
+				</View>
+				<View style={{flex: 1}}></View>
+			</View>
+		)
+	}
+}
+
+var styles = StyleSheet.create({
+	loginContainer: {
+		flex: 1,
+		marginTop: 30,
+		flexDirection: "row",
+	},
+	contentContainer: {
+		flex: 1
+	},
+	inputContainer: {
+		flexDirection: "row",
+	},
+	switchPassword: {
+		position: "absolute",
+		bottom: 7,
+		right:12,
+	},
+	viewContentBox: {
+		width: 20,
+	},
+	input: {
+		flex: 1,
+		paddingLeft: 10,
+		marginTop: 10,
+		backgroundColor: "#FFF",
+		borderWidth: 1,
+		borderStyle: "solid",
+		borderColor: "#D8D8D8",
+		borderRadius: 4,
+		height: 40,
+	},
+	utilsContainer: {
+		paddingTop: 10,
+		marginBottom: 15,
+		flexDirection: "row",
+		justifyContent: "flex-end"
+	},
+	userRemindContainer: {
+		marginTop: 40,
+		alignItems: "center",
+	},
+	userRemind: {
+		fontSize: 12,
+	},
+	userDelegate: {
+		color: "red",
+	},
+})
